@@ -45,9 +45,9 @@ app.use(session({
 
 // --- 6. API and Page Routing ---
 // Use prefixes to delegate routing to the specific files
-app.use('/api', authRoutes); // Handles /api/signup, /api/login, etc.
 app.use('/api/account', accountRoutes); // Handles /api/account/*
 app.use('/api/reviews', reviewRoutes); // Handles /api/reviews/*
+app.use('/api', authRoutes); // Handles /api/signup, /api/login, etc.
 app.use('/', pageRoutes); // Handles /, /dashboard, /results.html, etc.
 
 // --- 7. Favicon Handler ---
