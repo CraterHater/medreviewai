@@ -1,35 +1,54 @@
 // frontend-server.js
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const https = require('https');
 const path = require('path');
+const url = require('url');
 
 const app = express();
-const port = process.env.PORT || 3001; // Render will set the PORT env var
+const port = process.env.PORT || 3001;
 
 // The URL of your live backend service
 const API_URL = 'https://medreviewai.onrender.com';
 
-// --- THE FIX IS HERE ---
-// Proxy middleware options are simplified.
-// We remove pathRewrite because the app.use('/api', ...) handles it.
-const apiProxy = createProxyMiddleware({
-  target: API_URL,
-  changeOrigin: true, // This is important for virtual hosted sites
-});
-// --- END OF FIX ---
+// This is our manual proxy for all /api routes
+app.all('/api/*', (req, res) => {
+    const apiEndpoint = new url.URL(req.originalUrl, API_URL);
 
-// Use the proxy for any request to a path starting with /api
-app.use('/api', apiProxy);
+    const options = {
+        method: req.method,
+        headers: {
+            'Content-Type': 'application/json',
+            // Forward any other important headers if necessary
+        },
+    };
+
+    const proxyReq = https.request(apiEndpoint, options, (proxyRes) => {
+        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+        proxyRes.pipe(res, { end: true });
+    });
+
+    proxyReq.on('error', (err) => {
+        console.error('Proxy Request Error:', err);
+        res.status(502).send('Bad Gateway');
+    });
+
+    // Forward the request body from the original request to the proxy request
+    if (req.body) {
+        proxyReq.write(JSON.stringify(req.body));
+    }
+    
+    proxyReq.end();
+});
+
 
 // Serve the static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // For any other request that isn't for a static file or the API, serve the index.html
-// This allows for client-side routing and page reloads to work.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.listen(port, () => {
-  console.log(`Frontend service listening on port ${port}`);
+    console.log(`Frontend service listening on port ${port}`);
 });
