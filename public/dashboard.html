@@ -60,7 +60,6 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div id="delete-confirm-modal" class="modal">
         <div class="modal-header">
             <h2>Confirm Deletion</h2>
@@ -74,8 +73,8 @@
             <button id="delete-confirm-btn" class="cta-button danger">Delete</button>
         </div>
     </div>
-
-    <!-- Logout Confirmation Modal -->
+    
+    <!-- --- THE FIX: Updated Logout Modal for JS handling --- -->
     <div id="logout-confirm-modal" class="modal">
         <div class="modal-header">
             <h2>Confirm Logout</h2>
@@ -85,13 +84,24 @@
         </div>
         <div class="modal-actions">
             <button id="logout-cancel-btn" class="cta-button secondary">Cancel</button>
-            <form action="/api/logout" method="POST" style="margin:0;">
-                <button type="submit" class="cta-button danger">Logout</button>
-            </form>
+            <button id="logout-confirm-btn" class="cta-button danger">Logout</button>
         </div>
     </div>
 
     <script src="/js/dashboard.js"></script>
     <script src="/js/ui.js"></script>
+    
+    <!-- --- THE FIX: Added JS snippet to handle logout --- -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
+            if (logoutConfirmBtn) {
+                logoutConfirmBtn.addEventListener('click', async () => {
+                    await fetch('https://medreviewai.onrender.com/api/logout', { method: 'POST' });
+                    window.location.href = '/login.html';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,5 +1,8 @@
 // js/auth.js
 
+// --- THE FIX: Define the absolute base URL for your backend API ---
+const API_BASE_URL = 'https://medreviewai.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.querySelector('#signup-form');
     const messageDiv = document.querySelector('#form-message');
@@ -26,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const res = await fetch('/api/signup', {
+                // --- THE FIX: Use the absolute URL ---
+                const res = await fetch(`${API_BASE_URL}/api/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password, passwordConfirm }),
@@ -58,12 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = loginForm.email.value;
             const password = loginForm.password.value;
             
-            // Hide resend section on new attempt
             resendSection.style.display = 'none';
-            showMessage('', ''); // Clear any previous messages
+            showMessage('', '');
 
             try {
-                const res = await fetch('/api/login', {
+                // --- THE FIX: Use the absolute URL ---
+                const res = await fetch(`${API_BASE_URL}/api/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password }),
@@ -72,16 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
                 
                 if (res.status === 403 && data.unverified) {
-                    // Handle unverified user case specifically
                     resendMessage.textContent = data.message;
                     resendMessage.className = 'form-message error';
                     resendSection.style.display = 'block';
                 } else if (!res.ok) {
-                    // Handle all other errors
                     throw new Error(data.message || 'Failed to login');
                 } else {
-                    // Successful login
-                    window.location.href = '/dashboard';
+                    window.location.href = '/dashboard.html'; // Ensure .html is there
                 }
             } catch (err) {
                 showMessage(err.message, 'error');
@@ -102,14 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
             resendBtn.disabled = true;
 
             try {
-                const res = await fetch('/api/resend-verification', {
+                 // --- THE FIX: Use the absolute URL ---
+                const res = await fetch(`${API_BASE_URL}/api/resend-verification`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email }),
                 });
                 const data = await res.json();
                 resendMessage.textContent = data.message;
-                // Change message type to success on successful send
                 resendMessage.className = 'form-message success';
             } catch (error) {
                 resendMessage.textContent = 'An error occurred. Please try again.';

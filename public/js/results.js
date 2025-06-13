@@ -1,5 +1,7 @@
 // js/results.js
 
+const API_BASE_URL = 'https://medreviewai.onrender.com';
+
 import { renderAllResults, renderSummary, renderScore, renderInteractionMatrix } from './modules/resultsRenderer.js';
 import { openMrpModal, openInterventionModal, closeModal } from './modules/modalManager.js';
 
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!reviewId) {
         alert('No review ID found.');
-        window.location.href = '/dashboard';
+        window.location.href = '/dashboard.html';
         return;
     }
     elements.backToEditorBtn.href = `/review-editor.html?id=${reviewId}`;
@@ -70,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. Data Fetching and API Calls ---
     const loadReviewData = async () => {
         try {
-            const res = await fetch(`/api/reviews/${reviewId}`);
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`);
             if (!res.ok) throw new Error('Failed to fetch review data.');
             currentReviewData = await res.json();
             
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemData = JSON.parse(card.dataset.itemData);
         const itemType = card.dataset.itemType;
         try {
-            const res = await fetch(`/api/reviews/${reviewId}/dismiss`, {
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/dismiss`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ itemId: itemData.id, itemType: itemType }),
@@ -126,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateInteractions = async () => {
         elements.loadingOverlay.classList.add('show');
         try {
-            const res = await fetch(`/api/reviews/${reviewId}/generate-interactions`, { method: 'POST' });
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/generate-interactions`, { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
             currentReviewData.interactions = data;
@@ -181,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeAllModals();
         elements.loadingOverlay.classList.add('show');
         try {
-            const res = await fetch(`/api/reviews/${reviewId}/generate-letter`, {
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/generate-letter`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ addressee, language }),

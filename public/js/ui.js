@@ -1,5 +1,7 @@
 // js/ui.js
 
+const API_BASE_URL = 'https://medreviewai.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- Account Modal Elements & Logic ---
     const accountBtn = document.getElementById('account-btn');
@@ -26,12 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const openAccountModal = async () => {
-        // Clear any previous messages
         if (accountMessageDiv) accountMessageDiv.className = 'form-message'; 
         
-        // Fetch current user data to populate the form
         try {
-            const res = await fetch('/api/account');
+            const res = await fetch(`${API_BASE_URL}/api/account`);
             if (!res.ok) throw new Error('Could not get account details.');
             const data = await res.json();
             if (data.openaiKey) {
@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mainOverlay) mainOverlay.classList.remove('show');
     };
 
-    // --- Logout Modal Functions ---
     const openLogoutModal = () => {
         if(logoutModal) logoutModal.classList.add('show');
         if(mainOverlay) mainOverlay.classList.add('show');
@@ -64,9 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if(mainOverlay) mainOverlay.classList.remove('show');
     };
 
-    // --- Event Listeners ---
-
-    // Account Modal Listeners
     if (accountBtn) {
         accountBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -78,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
         accountModalCloseBtn.addEventListener('click', closeAccountModal);
     }
 
-    // Logout Modal Listeners
     if(logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -90,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutCancelBtn.addEventListener('click', closeLogoutModal);
     }
     
-    // Generic overlay click to close any and all open modals
     if (mainOverlay) {
         mainOverlay.addEventListener('click', () => {
             document.querySelectorAll('.modal.show').forEach(m => {
@@ -100,14 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Account form "Save Key" submission
     if (accountForm) {
         accountForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const openaiKey = apiKeyInput.value.trim();
 
             try {
-                const res = await fetch('/api/account', {
+                const res = await fetch(`${API_BASE_URL}/api/account`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ openaiKey }),
@@ -121,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Account form "Test Key" button
     if (testKeyBtn) {
         testKeyBtn.addEventListener('click', async () => {
             const apiKey = apiKeyInput.value.trim();
@@ -135,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             testKeyBtn.disabled = true;
 
             try {
-                const res = await fetch('/api/account/test-key', {
+                const res = await fetch(`${API_BASE_URL}/api/account/test-key`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ apiKey }),

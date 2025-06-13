@@ -1,5 +1,7 @@
 // js/editor.js
 
+const API_BASE_URL = 'https://medreviewai.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Form Elements
     const form = document.getElementById('review-form');
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!reviewId) {
         alert('No review specified. Redirecting to dashboard.');
-        window.location.href = '/dashboard';
+        window.location.href = '/dashboard.html';
         return;
     }
 
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadReviewData = async () => {
         try {
-            const res = await fetch(`/api/reviews/${reviewId}`);
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`);
             if (!res.ok) {
                 throw new Error('Could not fetch review data. It may not exist.');
             }
@@ -62,11 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             alert(error.message);
-            window.location.href = '/dashboard';
+            window.location.href = '/dashboard.html';
         }
     };
 
-    // This save function now has an optional parameter to suppress the success message
     const saveChanges = async (suppressMessage = false) => {
         const reviewData = {
             title: titleInput.value,
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const res = await fetch(`/api/reviews/${reviewId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(reviewData),
@@ -114,39 +115,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirmCloseBtn) confirmCloseBtn.addEventListener('click', closeConfirmModal);
     if (confirmCancelBtn) confirmCancelBtn.addEventListener('click', closeConfirmModal);
 
-    // --- CORRECTED AND ROBUST AI REVIEW LOGIC ---
     if (confirmActionBtn) {
         confirmActionBtn.addEventListener('click', () => {
             closeConfirmModal();
-            loadingOverlay.classList.add('show'); // Show UI update immediately
-
-            // Defer the heavy lifting to the next cycle of the event loop.
-            // This gives the browser a guaranteed moment to render the loading screen.
+            loadingOverlay.classList.add('show');
             setTimeout(async () => {
                 try {
-                    // First, save changes silently
                     const saveSuccessful = await saveChanges(true);
                     if (!saveSuccessful) {
                         throw new Error("Could not save changes. Aborting AI review.");
                     }
 
-                    // Then, perform the AI review
-                    const res = await fetch(`/api/reviews/${reviewId}/perform-review`, { method: 'POST' });
+                    const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/perform-review`, { method: 'POST' });
                     const data = await res.json();
                     
                     if (!res.ok) {
                         throw new Error(data.message || 'Failed to perform review.');
                     }
                     
-                    // On success, redirect.
                     window.location.href = `/results.html?id=${data.reviewId}`;
 
                 } catch (error) {
-                    // If anything fails, hide the loading screen and show the error.
                     loadingOverlay.classList.remove('show');
                     alert(`Error: ${error.message}`);
                 }
-            }, 50); // A small delay is enough.
+            }, 50);
         });
     }
     

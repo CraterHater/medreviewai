@@ -1,5 +1,6 @@
 // js/letter-editor.js
 
+const API_BASE_URL = 'https://medreviewai.onrender.com';
 const { jsPDF } = window.jspdf;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!reviewId) {
         alert('No review ID specified.');
-        window.location.href = '/dashboard';
+        window.location.href = '/dashboard.html';
         return;
     }
     
@@ -41,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadLetter = async () => {
         try {
-            const res = await fetch(`/api/reviews/${reviewId}`);
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`);
             if (!res.ok) throw new Error('Could not fetch review data.');
             const review = await res.json();
             reviewTitle = review.title;
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const letterHtml = letterContentDiv.innerHTML;
         const letterTextForStorage = letterHtml.replace(/<br\s*[\/]?>/gi, "\n").replace(/<p>/gi, "").replace(/<\/p>/gi, "\n");
         try {
-            const res = await fetch(`/api/reviews/${reviewId}/letter`, {
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/letter`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ letterContent: letterTextForStorage }),
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.classList.add('show');
         
         try {
-            const res = await fetch(`/api/reviews/${reviewId}/generate-letter`, {
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/generate-letter`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ addressee, language }),
@@ -93,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
 
-            // Instead of redirecting, just reload the new letter content
             loadLetter(); 
         } catch (error) {
             alert(`Error: ${error.message}`);
@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mainOverlay.classList.remove('show');
     };
 
-    // --- Event Listeners ---
     saveBtn.addEventListener('click', saveLetter);
     regenerateBtn.addEventListener('click', openAddresseeModal);
     addresseeGenerateBtn.addEventListener('click', handleRegenerate);
@@ -126,6 +125,5 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.save(`${reviewTitle.replace(/ /g, '_')}_Letter.pdf`);
     });
 
-    // Initial Load
     loadLetter();
 });
