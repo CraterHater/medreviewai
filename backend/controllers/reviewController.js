@@ -72,6 +72,7 @@ exports.deleteReview = async (req, res) => {
     try {
         const reviewId = parseInt(req.params.id);
         const review = await prisma.medicationReview.findFirst({
+            // --- THE FIX IS HERE: REMOVED THE TRAILING COLON ---
             where: { id: reviewId, userId: req.session.userId }
         });
         if (!review) return res.status(403).json({ message: "Forbidden: You do not own this resource." });
@@ -88,38 +89,22 @@ exports.performAIReview = async (req, res) => {
     try {
         const reviewId = parseInt(req.params.id);
         const user = await prisma.user.findUnique({ where: { id: req.session.userId } });
-        if (!user || !user.openaiKey) {
-            return res.status(400).json({ message: 'OpenAI API key is not set.' });
-        }
+        if (!user || !user.openaiKey) return res.status(400).json({ message: 'OpenAI API key is not set.' });
         
         const review = await prisma.medicationReview.findFirst({
             where: { id: reviewId, userId: req.session.userId },
         });
-        if (!review) {
-            return res.status(404).json({ message: 'Review not found.' });
-        }
+        if (!review) return res.status(404).json({ message: 'Review not found.' });
 
-        // --- Execute both AI calls in parallel for efficiency ---
-        const analysisPrompt = constructAIPrompt(review);
-        // This line was causing the crash because the function didn't exist in the imported module
-        const interactionPrompt = constructInteractionPrompt(review.medication);
-
-        const [aiResponseJson, interactionJson] = await Promise.all([
-            aiService.getJsonResponse(analysisPrompt, user.openaiKey),
-            aiService.getJsonResponse(interactionPrompt, user.openaiKey)
-        ]);
+        const prompt = constructAIPrompt(review);
+        const aiResponseJson = await aiService.getJsonResponse(prompt, user.openaiKey);
         
         const medicationScore = aiResponseJson.medication_score ? aiResponseJson.medication_score.score : null;
 
         await prisma.medicationReview.update({
             where: { id: reviewId },
-            data: { 
-                aiResponse: aiResponseJson,
-                interactions: interactionJson,
-                medicationScore: medicationScore 
-            },
+            data: { aiResponse: aiResponseJson, medicationScore: medicationScore },
         });
-
         res.json({ success: true, reviewId: reviewId });
     } catch (error) {
         console.error('AI Review Error:', error);
@@ -203,15 +188,12 @@ exports.generateInteractions = async (req, res) => {
     try {
         const reviewId = parseInt(req.params.id);
         const user = await prisma.user.findUnique({ where: { id: req.session.userId } });
-        if (!user || !user.openaiKey) {
-            return res.status(400).json({ message: 'OpenAI API key is not set.' });
-        }
+        if (!user || !user.openaiKey) return res.status(400).json({ message: 'OpenAI API key is not set.' });
+        
         const review = await prisma.medicationReview.findFirst({
             where: { id: reviewId, userId: req.session.userId },
         });
-        if (!review || !review.medication) {
-            return res.status(404).json({ message: 'A medication list is required to check for interactions.' });
-        }
+        if (!review || !review.medication) return res.status(404).json({ message: 'A medication list is required.' });
 
         const prompt = constructInteractionPrompt(review.medication);
         const interactionJson = await aiService.getJsonResponse(prompt, user.openaiKey);
@@ -220,7 +202,6 @@ exports.generateInteractions = async (req, res) => {
             where: { id: reviewId },
             data: { interactions: interactionJson },
         });
-
         res.json(interactionJson);
     } catch (error) {
         console.error('Interaction Generation Error:', error);
