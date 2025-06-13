@@ -4,15 +4,22 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-const { Pool } = require('pg'); // Import the Pool class from pg
+const { Pool } = require('pg');
 const PgSession = require('connect-pg-simple')(session);
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 
 const prisma = new PrismaClient();
 const app = express();
-// FIX: Use the PORT environment variable provided by Render
 const port = process.env.PORT || 3000;
+
+// --- NEW DEBUGGING MIDDLEWARE ---
+// This must be the very first middleware to run.
+// It will log every incoming request's method and path to your Render logs.
+app.use((req, res, next) => {
+    console.log(`[INCOMING REQUEST] Method: ${req.method}, Path: ${req.originalUrl}`);
+    next();
+});
 
 // --- 2. Route Imports ---
 const authRoutes = require('./routes/auth');
@@ -31,17 +38,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // --- 5. Session Management Setup ---
-// FIX: `connect-pg-simple` requires a `pg.Pool` instance, not a Prisma client.
-// This was a critical error preventing sessions from working at all.
 const pgPool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    // For production environments like Render, SSL is often required to connect to the database.
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 const sessionStore = new PgSession({
     pool: pgPool,
-    tableName: 'Session', // This table will be created automatically
+    tableName: 'Session',
     createTableIfMissing: true,
 });
 
@@ -53,27 +57,21 @@ app.use(session({
     cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         httpOnly: true,
-        // FIX: These settings are REQUIRED for cross-domain cookies to work in production over HTTPS.
         secure: process.env.NODE_ENV === 'production', 
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', 
     },
 }));
 
 // --- 6. API Routing ---
-// All API routes are prefixed with /api
 app.use('/api/account', accountRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api', authRoutes);
 
 // --- 7. Health Check and Root Route ---
-// A proper health check route for monitoring services.
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', message: 'MedReview AI Backend is running.' });
 });
 
-// FIX: A catch-all for the root path to guide the frontend developer.
-// This directly addresses your symptom. Instead of seeing the unhelpful "running" message,
-// a misconfigured request to the root will now get a clear error, pointing to the real problem.
 app.all('/', (req, res) => {
     res.status(404).json({ 
         status: 'error', 
