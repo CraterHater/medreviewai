@@ -72,7 +72,7 @@ exports.deleteReview = async (req, res) => {
     try {
         const reviewId = parseInt(req.params.id);
         const review = await prisma.medicationReview.findFirst({
-            // --- THE FIX IS HERE: REMOVED THE TRAILING COLON ---
+            // --- FIX: REMOVED THE TRAILING COLON ---
             where: { id: reviewId, userId: req.session.userId }
         });
         if (!review) return res.status(403).json({ message: "Forbidden: You do not own this resource." });

@@ -11,7 +11,9 @@ const transport = nodemailer.createTransport({
 });
 
 exports.sendVerificationEmail = async (to, token) => {
-    const verificationUrl = `http://localhost:3000/api/verify-email?token=${token}`;
+    // FIX: Use an environment variable for the URL to work in production
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+    const verificationUrl = `${backendUrl}/api/verify-email?token=${token}`;
     const mailOptions = {
         from: process.env.EMAIL_FROM,
         to: to,

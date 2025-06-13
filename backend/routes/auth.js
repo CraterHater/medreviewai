@@ -150,10 +150,12 @@ router.post('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error("Logout Error:", err);
-            return res.redirect('/');
+            // FIX: Return a JSON error instead of redirecting
+            return res.status(500).json({ message: 'Could not log out due to a server error.' });
         }
         res.clearCookie('connect.sid');
-        res.redirect('/');
+        // FIX: Return a JSON success message instead of redirecting
+        res.status(200).json({ message: 'Logout successful.' });
     });
 });
 
