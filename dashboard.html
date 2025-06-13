@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MedReview AI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <header class="app-toolbar">
+            <div class="toolbar-brand">
+                MedReview AI
+            </div>
+            <div class="toolbar-actions">
+                <a href="#" id="account-btn" class="toolbar-link">Account</a>
+                <button id="logout-btn" class="cta-button danger">Logout</button>
+            </div>
+        </header>
+
+        <main class="app-workspace">
+            <div class="workspace-header">
+                <h1>My Medication Reviews</h1>
+                <button id="create-review-btn" class="cta-button">
+                    + New Review
+                </button>
+            </div>
+            <div id="reviews-grid" class="reviews-grid">
+                <!-- Medication review cards will be dynamically inserted here by JS -->
+            </div>
+            <div id="no-reviews-message" class="no-reviews-message" style="display: none;">
+                <h2>Welcome!</h2>
+                <p>You don't have any medication reviews yet. Get started by creating a new one.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="account-modal" class="modal">
+        <div class="modal-header">
+            <h2>Account Settings</h2>
+            <button id="modal-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <form id="account-form">
+                <div class="form-group">
+                    <label for="openai-key">Your OpenAI API Key</label>
+                    <input type="password" id="openai-key" name="openaiKey" placeholder="sk-...">
+                </div>
+                <div id="account-message" class="form-message"></div>
+                <div class="modal-actions">
+                    <button type="button" id="test-key-btn" class="cta-button secondary">Test Key</button>
+                    <button type="submit" class="cta-button">Save Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="modal">
+        <div class="modal-header">
+            <h2>Confirm Deletion</h2>
+            <button id="delete-cancel-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Are you sure you want to delete this medication review? This action cannot be undone.</p>
+        </div>
+        <div class="modal-actions">
+            <button id="delete-cancel-btn-2" class="cta-button secondary">Cancel</button>
+            <button id="delete-confirm-btn" class="cta-button danger">Delete</button>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-confirm-modal" class="modal">
+        <div class="modal-header">
+            <h2>Confirm Logout</h2>
+        </div>
+        <div class="modal-content">
+            <p>Are you sure you want to log out?</p>
+        </div>
+        <div class="modal-actions">
+            <button id="logout-cancel-btn" class="cta-button secondary">Cancel</button>
+            <form action="/api/logout" method="POST" style="margin:0;">
+                <button type="submit" class="cta-button danger">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/ui.js"></script>
+</body>
+</html>

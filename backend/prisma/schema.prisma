@@ -1,0 +1,47 @@
+// backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  passwordHash String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   MedicationReview[]
+  openaiKey String?
+
+  // --- NEW FIELDS FOR EMAIL VERIFICATION ---
+  emailVerified           Boolean?  @default(false)
+  verificationToken       String?   @unique
+  verificationTokenExpires DateTime?
+}
+
+model MedicationReview {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  medication String?
+  labData    String?
+  vitalData  String?
+  history    String?
+  problems   String?
+  interactions    Json?
+  aiResponse Json?
+  formalLetter    String?
+  dismissedItems Json?
+
+  medicationScore Int?     // To store the calculated score from 0-100
+
+  // Relation to User
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+}

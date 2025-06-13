@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Results - MedReview AI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <header class="app-toolbar">
+            <div class="toolbar-brand">
+                <a href="/dashboard" class="toolbar-brand-link">MedReview AI</a>
+            </div>
+            <div class="toolbar-actions">
+                <a href="#" id="account-btn" class="toolbar-link">Account</a>
+                <form action="/api/logout" method="POST">
+                    <button type="submit" class="cta-button danger">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="app-workspace">
+            <div class="results-header">
+                <h1 id="results-title">Medication Review Analysis</h1>
+                <div class="results-header-actions">
+                    <div id="letter-actions-container">
+                         <!-- JS will populate this with either Generate or View/Edit button -->
+                    </div>
+                    <a href="/dashboard" class="cta-button secondary">← Back to Overview</a>
+                    <a id="back-to-editor-btn" href="#" class="cta-button secondary">Edit Inputs</a>
+                </div>
+            </div>
+
+            <div class="top-row-grid">
+                <div id="patient-summary-grid" class="patient-summary-grid"></div>
+                <div id="score-section" class="score-section">
+                    <h2>Medication Score</h2>
+                    <div class="score-gauge">
+                        <svg class="score-svg" viewBox="0 0 36 36">
+                            <path class="score-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path id="score-circle" class="score-circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div id="score-text" class="score-text">0%</div>
+                    </div>
+                    <div class="score-details">
+                        <p class="mrp-count-display"><strong id="mrp-count">0</strong> Active MRPs</p>
+                        <p id="score-rationale" class="score-rationale"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2>Active Medicine-Related Problems</h2>
+                <div id="mrp-grid" class="mrp-grid"></div>
+            </div>
+
+            <div class="results-section">
+                <h2>Active Broader Interventions</h2>
+                <div id="interventions-grid" class="interventions-grid"></div>
+            </div>
+
+            <div class="results-section">
+                <h2>Drug-Drug Interactions</h2>
+                <div id="interaction-container">
+                    <div class="interaction-matrix-wrapper">
+                        <table id="interaction-matrix" class="interaction-matrix">
+                            <!-- Matrix will be built by JS -->
+                        </table>
+                    </div>
+                    <div id="crucial-interactions-list" class="crucial-interactions-list">
+                        <!-- Summary bars will be built by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section archived-section">
+                <h2>Archived Items</h2>
+                <div id="archived-mrp-grid" class="mrp-grid"></div>
+                <div id="archived-interventions-grid" class="interventions-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Please wait...</p>
+    </div>
+    <div id="account-modal" class="modal">
+        <div class="modal-header">
+            <h2>Account Settings</h2>
+            <button id="modal-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <form id="account-form">
+                <div class="form-group">
+                    <label for="openai-key">Your OpenAI API Key</label>
+                    <input type="password" id="openai-key" name="openaiKey" placeholder="sk-...">
+                </div>
+                <div id="account-message" class="form-message"></div>
+                <div class="modal-actions">
+                    <button type="button" id="test-key-btn" class="cta-button secondary">Test Key</button>
+                    <button type="submit" class="cta-button">Save Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="mrp-detail-modal" class="modal modal-lg">
+        <div class="modal-header">
+            <h2 id="modal-mrp-title">MRP Details</h2>
+            <button id="mrp-modal-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <h3>Detailed Assessment</h3>
+            <p id="modal-mrp-assessment"></p>
+            <h3>Recommended Advice</h3>
+            <p id="modal-mrp-advice"></p>
+        </div>
+    </div>
+    <div id="intervention-detail-modal" class="modal modal-lg">
+        <div class="modal-header">
+            <h2 id="modal-intervention-title">Intervention Details</h2>
+            <button id="intervention-modal-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <h3>Detailed Explanation</h3>
+            <p id="modal-intervention-explanation"></p>
+        </div>
+    </div>
+    <div id="addressee-modal" class="modal">
+        <div class="modal-header">
+            <h2>Generate Letter</h2>
+            <button id="addressee-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Please provide the details for the letter generation.</p>
+            <div class="form-group">
+                <label for="addressee-name">Recipient Name/Title</label>
+                <input type="text" id="addressee-name" placeholder="e.g., Dr. Smith">
+            </div>
+            <div class="form-group">
+                <label for="letter-language">Language</label>
+                <select id="letter-language">
+                    <option value="Dutch" selected>Dutch</option>
+                    <option value="English">English</option>
+                    <option value="German">German</option>
+                    <option value="French">French</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="addressee-cancel-btn" class="cta-button secondary">Cancel</button>
+            <button id="addressee-generate-btn" class="cta-button primary-action">Generate</button>
+        </div>
+    </div>
+    
+    <script src="/js/results.js" type="module"></script>
+    <script src="/js/ui.js"></script>
+</body>
+</html>

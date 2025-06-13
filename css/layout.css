@@ -1,0 +1,35 @@
+/* --- Layout Styles --- */
+/* Contains styles for major structural elements like navigation and footer */
+
+/* --- Navigation --- */
+.main-nav {
+    text-align: right;
+    padding-bottom: 2rem;
+}
+.nav-link {
+    color: var(--white-color);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border: 1px solid var(--white-color);
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.nav-link:hover {
+    background-color: var(--white-color);
+    color: var(--primary-color);
+}
+
+/* --- Footer --- */
+.footer {
+    background: var(--dark-color);
+    color: var(--gray-color);
+    text-align: center;
+    padding: 40px 0;
+}
+.footer .disclaimer {
+    font-size: 0.8rem;
+    margin-top: 1rem;
+    max-width: 600px;
+    margin: 1rem auto 0 auto;
+}

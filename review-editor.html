@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Review - MedReview AI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <header class="app-toolbar">
+            <div class="toolbar-brand">
+                <a href="/dashboard" class="toolbar-brand-link">MedReview AI</a>
+            </div>
+            <div class="toolbar-actions">
+                <a href="#" id="account-btn" class="toolbar-link">Account</a>
+                <form action="/api/logout" method="POST">
+                    <button type="submit" class="cta-button danger">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="app-workspace">
+            <div class="editor-container">
+                <form id="review-form">
+                    <div class="form-group">
+                        <label for="review-title">Review Name</label>
+                        <input type="text" id="review-title" name="title" placeholder="e.g., John Doe - Q3 Review" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="problems">Relevant Problems</label>
+                        <textarea id="problems" name="problems" rows="4" placeholder="List patient problems, one per line (e.g., hypertension, insomnia)..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medication">Patient Medication</label>
+                        <textarea id="medication" name="medication" rows="8" placeholder="List all current medications, dosages, and frequencies..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lab-data">Laboratory Data</label>
+                        <textarea id="lab-data" name="labData" rows="6" placeholder="Enter relevant lab results (e.g., Creatinine, K+, Na+)..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vital-data">Vital Functions</label>
+                        <textarea id="vital-data" name="vitalData" rows="4" placeholder="Enter patient vitals (e.g., Blood Pressure, Heart Rate)..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="history">Patient History</label>
+                        <textarea id="history" name="history" rows="6" placeholder="Describe relevant patient history, comorbidities, and chief complaint..."></textarea>
+                    </div>
+                    
+                    <div id="form-message" class="form-message"></div>
+
+                    <div class="editor-actions">
+                        <a href="/dashboard" class="cta-button secondary">← Back to Dashboard</a>
+                        <div class="main-actions">
+                            <a id="view-results-btn" href="#" class="cta-button secondary" style="display: none;">View Results →</a>
+                            <button type="submit" class="cta-button">Save Changes</button>
+                            <button type="button" id="perform-review-btn" class="cta-button primary-action">Perform Medication Review</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- === THE FIX IS HERE: ADDING THE FULL MODAL MARKUP === -->
+    <!-- Account Settings Modal -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="account-modal" class="modal">
+        <div class="modal-header">
+            <h2>Account Settings</h2>
+            <button id="modal-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <form id="account-form">
+                <div class="form-group">
+                    <label for="openai-key">Your OpenAI API Key</label>
+                    <input type="password" id="openai-key" name="openaiKey" placeholder="sk-...">
+                </div>
+                <div id="account-message" class="form-message"></div>
+                <div class="modal-actions">
+                    <button type="button" id="test-key-btn" class="cta-button secondary">Test Key</button>
+                    <button type="submit" class="cta-button">Save Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Anonymity Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-header">
+            <h2>Confirm Action</h2>
+            <button id="confirm-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <p>By clicking "Confirm", you verify that all patient data entered is fully anonymized and contains no personally identifiable information (PII).</p>
+        </div>
+        <div class="modal-actions">
+            <button id="confirm-cancel-btn" class="cta-button secondary">Cancel</button>
+            <button id="confirm-action-btn" class="cta-button primary-action">Confirm</button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Performing AI Review... Please wait.</p>
+    </div>
+    <!-- === END OF FIX === -->
+
+    <script src="/js/editor.js"></script>
+    <script src="/js/ui.js"></script>
+</body>
+</html>

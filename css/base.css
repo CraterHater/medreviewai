@@ -1,0 +1,65 @@
+/* --- Base Styles --- */
+/* Contains root variables, resets, and global element styles */
+
+:root {
+    --primary-color: #0052cc; /* A professional blue */
+    --secondary-color: #34d1bf; /* A calming teal/green for gradients */
+    --dark-color: #1a202c; /* For text */
+    --light-color: #f4f7f9; /* For backgrounds */
+    --white-color: #ffffff;
+    --gray-color: #a0aec0;
+    --error-color: #c53030; /* Red for errors */
+    --success-color: #2f855a; /* Green for success */
+    --border-radius: 8px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: var(--white-color);
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3 {
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+section {
+    padding: 80px 0;
+}
+
+.section-description {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 4rem auto;
+    color: #555;
+    font-size: 1.1rem;
+}

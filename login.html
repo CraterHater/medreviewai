@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MedReview AI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Login to MedReview AI</h2>
+            <p>Welcome back! Please enter your details.</p>
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div id="form-message" class="form-message"></div>
+                <button type="submit" class="cta-button auth-button">Login</button>
+            </form>
+            
+            <div id="resend-verification-section" style="display: none; margin-top: 1.5rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                <p id="resend-message" class="form-message error"></p>
+                <button id="resend-btn" class="cta-button auth-button secondary">Resend Verification Email</button>
+            </div>
+
+            <p class="auth-switch">Don't have an account? <a href="/#signup">Sign up</a></p>
+        </div>
+    </div>
+    
+    <script src="/js/auth.js"></script>
+</body>
+</html>

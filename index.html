@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedReview AI - Intelligent Medication Reviews</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="hero-section">
+        <div class="container">
+            <nav class="main-nav">
+                <a href="/login.html" class="nav-link">Login</a>
+            </nav>
+            <h1 class="hero-title">Welcome to MedReview AI</h1>
+            <p class="hero-subtitle">Harnessing the power of AI to provide clear, concise, and personalized medication insights.</p>
+            <a href="#signup" class="cta-button">Sign Up Now</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- "How It Works" Section with Images -->
+        <section id="features" class="features-section">
+            <div class="container">
+                <h2>How It Works</h2>
+                <p class="section-description">A simple, visual guide to understanding your medications.</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <!-- Placeholder replaced with image -->
+                        <div class="feature-image-container">
+                            <img src="images/image_1.png" alt="Screenshot of the medication input screen">
+                        </div>
+                        <h3>Step 1: Input Your Medication</h3>
+                        <p>Securely enter your current prescription or over-the-counter drug.</p>
+                    </div>
+                    <div class="feature-card">
+                        <!-- Placeholder replaced with image -->
+                        <div class="feature-image-container">
+                            <img src="images/image_2.png" alt="Screenshot of the AI analysis in progress">
+                        </div>
+                        <h3>Step 2: AI-Powered Analysis</h3>
+                        <p>Our AI analyzes interactions, side effects, and provides a simplified summary.</p>
+                    </div>
+                    <div class="feature-card">
+                        <!-- Placeholder replaced with image -->
+                        <div class="feature-image-container">
+                             <img src="images/image_3.png" alt="Screenshot of the final medication report">
+                        </div>
+                        <h3>Step 3: Get Your Report</h3>
+                        <p>Receive an easy-to-read report that you can share with your healthcare provider.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials-section">
+            <div class="container">
+                <h2>Trusted by Users</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <blockquote>"This tool gave me the confidence to talk to my doctor about my concerns. A game-changer."</blockquote>
+                        <cite>- Placeholder User 1</cite>
+                    </div>
+                    <div class="testimonial-card">
+                        <blockquote>"As a caregiver, MedReview AI is an indispensable tool for managing my family's health."</blockquote>
+                        <cite>- Placeholder User 2</cite>
+                    </div>
+                    <div class="testimonial-card">
+                        <blockquote>"Finally, a way to understand the fine print without a medical degree. Incredibly helpful!"</blockquote>
+                        <cite>- Placeholder User 3</cite>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing-section">
+            <div class="container">
+                <h2>Simple, Transparent Pricing</h2>
+                <div class="pricing-box">
+                    <h3>Early Access Program</h3>
+                    <div class="price">
+                        $0<span class="price-period">/ year</span>
+                    </div>
+                    <p class="price-description">
+                        As an early adopter, you get full access to all features for free.
+                        Your feedback will help shape the future of MedReview AI.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sign Up Section -->
+        <section id="signup" class="signup-section">
+            <div class="container">
+                <h2>Get Started Today</h2>
+                <p>Join our early access program and be among the first to experience the future of medication management.</p>
+                <form class="signup-form" id="signup-form">
+                    <input type="email" name="email" placeholder="Enter your email address" aria-label="Email Address" required>
+                    <input type="password" name="password" placeholder="Choose a password" aria-label="Password" required minlength="8">
+                    <input type="password" name="passwordConfirm" placeholder="Confirm your password" aria-label="Confirm Password" required minlength="8">
+                    <button type="submit" class="cta-button">Create Account</button>
+                </form>
+                <div id="form-message" class="form-message"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 MedReview AI. All Rights Reserved.</p>
+            <p class="disclaimer">Disclaimer: This tool is for informational purposes only and is not a substitute for professional medical advice.</p>
+        </div>
+    </footer>
+
+    <script src="/js/auth.js"></script>
+</body>
+</html>

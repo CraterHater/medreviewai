@@ -1,0 +1,63 @@
+/* --- Letter Editor Page Styles --- */
+
+.letter-editor-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    /* Set a fixed height relative to the viewport, minus the toolbar and some padding */
+    height: calc(100vh - 110px); 
+}
+
+.letter-actions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0; /* Prevent this header from shrinking */
+}
+.letter-actions-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+.letter-actions-header .main-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+#save-status {
+    margin: 0 0 1rem 0;
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+/* This is the grey background area */
+.letter-paper {
+    flex-grow: 1; /* This will now correctly fill the remaining space */
+    background-color: var(--light-color);
+    padding: 2rem;
+    overflow-y: auto; /* The grey area will scroll if the window is too small */
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+}
+
+/* This is the white "document" itself */
+.editable-letter {
+    max-width: 800px;
+    min-height: 100%; /* Make it at least as tall as its container */
+    margin: 0 auto; /* Center the page horizontally */
+    padding: 3rem 4rem; /* Generous padding for a document feel */
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* A more pronounced shadow */
+    white-space: pre-wrap;
+}
+.editable-letter:focus {
+    outline: 2px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 0 0 4px rgba(0, 82, 204, 0.2);
+}

@@ -1,0 +1,78 @@
+/* --- Authentication Page Styles --- */
+
+.auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--light-color);
+    padding: 20px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 450px;
+    background: var(--white-color);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.auth-box h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.auth-form {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #ccc;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
+}
+
+.auth-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+.auth-switch {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+.auth-switch a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-button.danger {
+    background-color: #e53e3e;
+}
+.auth-button.danger:hover {
+    background-color: #c53030;
+}

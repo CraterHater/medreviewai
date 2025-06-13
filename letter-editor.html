@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Letter - MedReview AI</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <header class="app-toolbar">
+            <div class="toolbar-brand">
+                <a href="/dashboard" class="toolbar-brand-link">MedReview AI</a>
+            </div>
+            <div class="toolbar-actions">
+                <a href="#" id="account-btn" class="toolbar-link">Account</a>
+                <form action="/api/logout" method="POST">
+                    <button type="submit" class="cta-button danger">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="app-workspace">
+            <div class="letter-editor-container">
+                <div class="letter-actions-header">
+                    <h1>Formal Letter Editor</h1>
+                    <div class="main-actions">
+                        <a id="back-to-results-btn" href="#" class="cta-button secondary">← Back to Results</a>
+                        <button id="regenerate-btn" class="cta-button secondary">Regenerate</button>
+                        <button id="download-pdf-btn" class="cta-button secondary">Download as PDF</button>
+                        <button id="save-letter-btn" class="cta-button">Save Changes</button>
+                    </div>
+                </div>
+                <div id="save-status" class="form-message"></div>
+                <div class="letter-paper">
+                    <div id="letter-content" class="editable-letter" contenteditable="true" spellcheck="false">
+                        <p>Loading letter...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Regenerating Letter... Please wait.</p>
+    </div>
+    
+    <div id="account-modal" class="modal">
+        <div class="modal-header">
+            <h2>Account Settings</h2>
+            <button id="modal-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <form id="account-form">
+                <div class="form-group">
+                    <label for="openai-key">Your OpenAI API Key</label>
+                    <input type="password" id="openai-key" name="openaiKey" placeholder="sk-...">
+                </div>
+                <div id="account-message" class="form-message"></div>
+                <div class="modal-actions">
+                    <button type="button" id="test-key-btn" class="cta-button secondary">Test Key</button>
+                    <button type="submit" class="cta-button">Save Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addressee-modal" class="modal">
+        <div class="modal-header">
+            <h2>Regenerate Letter</h2>
+            <button id="addressee-close-btn" class="modal-close-btn">×</button>
+        </div>
+        <div class="modal-content">
+            <p>Please confirm the details for the letter generation.</p>
+            <div class="form-group">
+                <label for="addressee-name">Recipient Name/Title</label>
+                <input type="text" id="addressee-name" placeholder="e.g., Dr. Smith">
+            </div>
+            <div class="form-group">
+                <label for="letter-language">Language</label>
+                <select id="letter-language">
+                    <option value="Dutch" selected>Dutch</option>
+                    <option value="English">English</option>
+                    <option value="German">German</option>
+                    <option value="French">French</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="addressee-cancel-btn" class="cta-button secondary">Cancel</button>
+            <button id="addressee-generate-btn" class="cta-button primary-action">Generate</button>
+        </div>
+    </div>
+    
+    <script src="/node_modules/jspdf/dist/jspdf.umd.min.js"></script>
+    <script src="/js/letter-editor.js"></script>
+    <script src="/js/ui.js"></script>
+</body>
+</html>

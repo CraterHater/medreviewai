@@ -1,0 +1,78 @@
+/* --- Editor Page Styles --- */
+
+/* The editor-layout grid is no longer needed */
+.editor-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--white-color);
+    padding: 2rem 3rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+#review-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#review-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+#review-form input[type="text"],
+#review-form textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    border-radius: var(--border-radius);
+    border: 1px solid #ccc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical; /* Prevents horizontal resize, allows vertical */
+}
+
+#review-form input[type="text"]:focus,
+#review-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
+}
+
+.editor-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.main-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.cta-button.secondary {
+    background-color: var(--light-color);
+    color: var(--dark-color);
+    border: 1px solid #ccc;
+}
+
+.cta-button.secondary:hover {
+    background-color: #e2e8f0;
+}
+
+.cta-button.primary-action {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+.cta-button.primary-action:hover {
+    filter: brightness(1.1);
+}
+
+.toolbar-brand-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* The review-results-container styles are no longer needed on this page */
