@@ -3,7 +3,6 @@
 // --- 1. Imports and Initial Setup ---
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const session = require('express-session');
 const PgSession = require('connect-pg-simple')(session);
 const { PrismaClient } = require('@prisma/client');
@@ -16,16 +15,12 @@ const port = 3000;
 const authRoutes = require('./routes/auth');
 const accountRoutes = require('./routes/account');
 const reviewRoutes = require('./routes/reviews');
-const pageRoutes = require('./routes/pages');
 
 // --- 3. Core Middleware ---
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// --- 4. Static File Serving ---
-app.use(express.static(path.join(__dirname, '../public')));
-
-// --- 5. Session Management Setup ---
+// --- 4. Session Management Setup ---
 const sessionStore = new PgSession({
     prisma: prisma,
     tableName: 'Session',
@@ -43,17 +38,19 @@ app.use(session({
     },
 }));
 
-// --- 6. API and Page Routing ---
-// Use prefixes to delegate routing to the specific files
-app.use('/api/account', accountRoutes); // Handles /api/account/*
-app.use('/api/reviews', reviewRoutes); // Handles /api/reviews/*
-app.use('/api', authRoutes); // Handles /api/signup, /api/login, etc.
-app.use('/', pageRoutes); // Handles /, /dashboard, /results.html, etc.
+// --- 5. API Routing ---
+// THE STATIC FILE AND PAGE ROUTERS HAVE BEEN REMOVED.
+app.use('/api/account', accountRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api', authRoutes);
 
-// --- 7. Favicon Handler ---
-app.get('/favicon.ico', (req, res) => res.status(204).send());
+// --- 6. Root/Health Check Route ---
+// Add a simple root route to confirm the API is running.
+app.get('/', (req, res) => {
+    res.status(200).json({ status: 'ok', message: 'MedReview AI Backend is running.' });
+});
 
-// --- 8. Start the server ---
+// --- 7. Start the server ---
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
