@@ -1,6 +1,9 @@
 // js/auth.js
 
 document.addEventListener('DOMContentLoaded', () => {
+    // This is defined in apiConfig.js, which is loaded first.
+    // const API_BASE_URL = '...'; 
+
     const signupForm = document.querySelector('#signup-form');
     const messageDiv = document.querySelector('#form-message');
 
@@ -30,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password, passwordConfirm }),
+                    // --- THE FIX: Tell the browser to handle the session cookie ---
+                    credentials: 'include' 
                 });
 
                 const data = await res.json();
@@ -37,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(data.message || 'Something went wrong');
                 }
                 
-                // --- THE FIX: Redirect to dashboard on successful signup ---
+                // On success, the backend creates the session, now we can redirect.
                 window.location.href = '/dashboard.html';
 
             } catch (err) {
@@ -66,6 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password }),
+                    // --- THE FIX: Tell the browser to handle the session cookie ---
+                    credentials: 'include' 
                 });
 
                 const data = await res.json();
@@ -103,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email }),
+                    // This one doesn't strictly need it, but it's good practice for consistency
+                    credentials: 'include'
                 });
                 const data = await res.json();
                 resendMessage.textContent = data.message;
