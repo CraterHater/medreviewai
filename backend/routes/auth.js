@@ -1,5 +1,9 @@
 // backend/routes/auth.js
 
+// --- THIS IS THE TEST ---
+// We will look for this exact message in your backend logs.
+console.log("Auth.js v3 is running. Auto-verify is active.");
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
@@ -9,6 +13,7 @@ const { sendVerificationEmail } = require('../utils/email');
 const router = express.Router();
 const prisma = new PrismaClient();
 const saltRounds = 10;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5500';
 
 // POST /api/signup
 router.post('/signup', async (req, res) => {
@@ -22,37 +27,24 @@ router.post('/signup', async (req, res) => {
         }
 
         const existingUser = await prisma.user.findUnique({ where: { email } });
-
         if (existingUser) {
-            // If user exists and is verified, reject
-            if (existingUser.emailVerified) {
-                return res.status(409).json({ message: "An account with this email already exists." });
-            }
-            // If user is unverified and token is old, allow overwrite by deleting the old record
-            const oneHourAgo = new Date(Date.now() - 3600 * 1000);
-            if (existingUser.verificationTokenExpires < oneHourAgo) {
-                await prisma.user.delete({ where: { email } });
-            } else {
-                return res.status(409).json({ message: "This email is already pending verification. Please check your inbox or wait an hour to try again." });
-            }
+            return res.status(409).json({ message: "An account with this email already exists." });
         }
 
         const passwordHash = await bcrypt.hash(password, saltRounds);
-        const verificationToken = crypto.randomBytes(32).toString('hex');
         
-        const user = await prisma.user.create({
+        const newUser = await prisma.user.create({
             data: {
                 email,
                 passwordHash,
-                emailVerified: false,
-                verificationToken: verificationToken,
-                verificationTokenExpires: new Date(Date.now() + 3600 * 1000), // 1 hour from now
+                emailVerified: true,
             },
         });
 
-        await sendVerificationEmail(user.email, verificationToken);
+        req.session.userId = newUser.id;
         
-        res.status(201).json({ message: "Account created! Please check your email to verify your account." });
+        res.status(201).json({ message: "Account created successfully. Redirecting..." });
+
     } catch (error) {
         console.error("Signup Error:", error);
         res.status(500).json({ message: "An error occurred during signup." });
@@ -74,34 +66,39 @@ router.post('/login', async (req, res) => {
         }
 
         if (!user.emailVerified) {
-            // Send a specific status and flag for the frontend to handle
-            return res.status(403).json({ message: "Please verify your email address.", unverified: true });
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { emailVerified: true }
+            });
         }
         
         req.session.userId = user.id;
         res.status(200).json({ message: "Login successful" });
+
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ message: "An error occurred during login." });
     }
 });
 
+// ... (rest of the file remains the same)
+
 // GET /api/verify-email
 router.get('/verify-email', async (req, res) => {
     const { token } = req.query;
     if (!token) {
-        return res.redirect('/verification-failed.html');
+        return res.redirect(`${FRONTEND_URL}/verification-failed.html`);
     }
 
     const user = await prisma.user.findFirst({
         where: {
             verificationToken: token,
-            verificationTokenExpires: { gt: new Date() }, // Check if token is not expired
+            verificationTokenExpires: { gt: new Date() },
         },
     });
 
     if (!user) {
-        return res.redirect('/verification-failed.html');
+        return res.redirect(`${FRONTEND_URL}/verification-failed.html`);
     }
 
     await prisma.user.update({
@@ -113,7 +110,7 @@ router.get('/verify-email', async (req, res) => {
         },
     });
 
-    res.redirect('/verification-success.html');
+    res.redirect(`${FRONTEND_URL}/verification-success.html`);
 });
 
 // POST /api/resend-verification
@@ -122,7 +119,6 @@ router.post('/resend-verification', async (req, res) => {
         const { email } = req.body;
         const user = await prisma.user.findUnique({ where: { email } });
 
-        // Don't reveal if the user exists. And don't resend if already verified.
         if (!user || user.emailVerified) {
             return res.json({ message: "If an account with this email exists and requires verification, a new email has been sent." });
         }
@@ -150,11 +146,9 @@ router.post('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error("Logout Error:", err);
-            // FIX: Return a JSON error instead of redirecting
             return res.status(500).json({ message: 'Could not log out due to a server error.' });
         }
         res.clearCookie('connect.sid');
-        // FIX: Return a JSON success message instead of redirecting
         res.status(200).json({ message: 'Logout successful.' });
     });
 });

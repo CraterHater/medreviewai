@@ -2,10 +2,14 @@
 
 function isAuthenticated(req, res, next) {
     if (req.session && req.session.userId) {
+        // User is authenticated, proceed to the next handler
         return next();
     }
-    // If not authenticated, redirect to the login page.
-    res.redirect('/login.html');
+    
+    // --- THE FIX ---
+    // User is not authenticated. Send a 401 Unauthorized status code
+    // with a JSON message instead of redirecting.
+    res.status(401).json({ message: 'Authentication required. Please log in.' });
 }
 
 module.exports = isAuthenticated;
