@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let reviewIdToDelete = null;
 
     const createReviewCard = (review) => {
-        // ... (this function does not need changes)
         const card = document.createElement('div');
         card.className = 'review-card';
         card.dataset.review = JSON.stringify(review); 
@@ -92,13 +91,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadReviews = async () => {
         try {
-            // --- THE FIX: Add `credentials: 'include'` ---
+            // --- THIS IS THE CRITICAL FIX ---
+            // We must tell fetch to send the session cookie on this cross-domain request.
             const res = await fetch(`${API_BASE_URL}/api/reviews`, { credentials: 'include' });
-            if (res.status === 401 || res.status === 403) {
-                window.location.href = '/login.html'; // Redirect if not authenticated
+            
+            if (res.status === 401) {
+                // If the server says we're not logged in, go to the login page.
+                window.location.href = '/login.html';
                 return;
             }
-            if (!res.ok) throw new Error('Failed to fetch reviews.');
+            if (!res.ok) {
+                // For any other error, show a message.
+                throw new Error('Failed to fetch reviews from the server.');
+            }
             
             const reviews = await res.json();
             reviewsGrid.innerHTML = ''; 
@@ -119,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     createReviewBtn.addEventListener('click', async () => {
         try {
-            // --- THE FIX: Add `credentials: 'include'` ---
             const res = await fetch(`${API_BASE_URL}/api/reviews`, { method: 'POST', credentials: 'include' });
             if (!res.ok) throw new Error('Failed to create review.');
             const newReview = await res.json();
@@ -164,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteConfirmBtn.addEventListener('click', async () => {
         if (!reviewIdToDelete) return;
         try {
-            // --- THE FIX: Add `credentials: 'include'` ---
             const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewIdToDelete}`, { method: 'DELETE', credentials: 'include' });
             if (!res.ok) throw new Error('Failed to delete the review.');
             
