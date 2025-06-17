@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadLetter = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`);
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, { credentials: 'include' });
+            if (res.status === 401) return window.location.href = '/login.html';
             if (!res.ok) throw new Error('Could not fetch review data.');
             const review = await res.json();
             reviewTitle = review.title;
@@ -65,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ letterContent: letterTextForStorage }),
+                credentials: 'include'
             });
             if (!res.ok) throw new Error('Failed to save letter.');
             showStatus('Changes saved!', 'success');
@@ -89,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ addressee, language }),
+                credentials: 'include'
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);

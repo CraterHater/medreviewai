@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadReviewData = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`);
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, { credentials: 'include' });
+            if (res.status === 401) return window.location.href = '/login.html';
             if (!res.ok) {
                 throw new Error('Could not fetch review data. It may not exist.');
             }
@@ -81,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(reviewData),
+                credentials: 'include'
             });
             if (!res.ok) {
                 throw new Error('Failed to save changes.');
@@ -124,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error("Could not save changes. Aborting AI review.");
                     }
 
-                    const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/perform-review`, { method: 'POST' });
+                    const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/perform-review`, { method: 'POST', credentials: 'include' });
                     const data = await res.json();
                     
                     if (!res.ok) {

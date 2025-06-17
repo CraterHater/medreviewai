@@ -4,7 +4,6 @@ import { renderAllResults, renderSummary, renderScore, renderInteractionMatrix }
 import { openMrpModal, openInterventionModal, closeModal } from './modules/modalManager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. DOM Element Setup ---
     const elements = {
         grids: {
             mrpGrid: document.getElementById('mrp-grid'),
@@ -54,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         backToEditorBtn: document.getElementById('back-to-editor-btn'),
     };
 
-    // --- 2. State Management ---
     const params = new URLSearchParams(window.location.search);
     const reviewId = params.get('id');
     let currentReviewData = {};
@@ -67,10 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     elements.backToEditorBtn.href = `/review-editor.html?id=${reviewId}`;
     
-    // --- 3. Data Fetching and API Calls ---
     const loadReviewData = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`);
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, { credentials: 'include' });
+            if (res.status === 401) return window.location.href = '/login.html';
             if (!res.ok) throw new Error('Failed to fetch review data.');
             currentReviewData = await res.json();
             
@@ -114,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ itemId: itemData.id, itemType: itemType }),
+                credentials: 'include'
             });
             if (!res.ok) throw new Error('Failed to update item status.');
             dismissedItems = await res.json();
@@ -126,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateInteractions = async () => {
         elements.loadingOverlay.classList.add('show');
         try {
-            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/generate-interactions`, { method: 'POST' });
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}/generate-interactions`, { method: 'POST', credentials: 'include' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
             currentReviewData.interactions = data;
@@ -138,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- 4. Modal Management & Event Listeners ---
     const openAddresseeModal = () => {
         elements.modals.addressee.modal.classList.add('show');
         elements.mainOverlay.classList.add('show');
@@ -185,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ addressee, language }),
+                credentials: 'include'
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
@@ -195,6 +194,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 5. Initial Load ---
     loadReviewData();
 });
