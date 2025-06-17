@@ -1,7 +1,5 @@
 // js/results.js
 
-const API_BASE_URL = 'https://medreviewai.onrender.com';
-
 import { renderAllResults, renderSummary, renderScore, renderInteractionMatrix } from './modules/resultsRenderer.js';
 import { openMrpModal, openInterventionModal, closeModal } from './modules/modalManager.js';
 

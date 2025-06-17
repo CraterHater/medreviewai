@@ -1,6 +1,5 @@
 // js/letter-editor.js
 
-const API_BASE_URL = 'https://medreviewai.onrender.com';
 const { jsPDF } = window.jspdf;
 
 document.addEventListener('DOMContentLoaded', () => {

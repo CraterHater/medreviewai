@@ -1,7 +1,5 @@
 // js/dashboard.js
 
-const API_BASE_URL = 'https://medreviewai.onrender.com';
-
 document.addEventListener('DOMContentLoaded', () => {
     // Main elements
     const reviewsGrid = document.getElementById('reviews-grid');
@@ -18,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let reviewIdToDelete = null;
 
     const createReviewCard = (review) => {
+        // ... (this function does not need changes)
         const card = document.createElement('div');
         card.className = 'review-card';
         card.dataset.review = JSON.stringify(review); 
@@ -93,11 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadReviews = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/reviews`);
-            if (!res.ok) {
-                 if (res.status === 401 || res.status === 403) window.location.href = '/login.html';
-                 throw new Error('Failed to fetch reviews.');
+            // --- THE FIX: Add `credentials: 'include'` ---
+            const res = await fetch(`${API_BASE_URL}/api/reviews`, { credentials: 'include' });
+            if (res.status === 401 || res.status === 403) {
+                window.location.href = '/login.html'; // Redirect if not authenticated
+                return;
             }
+            if (!res.ok) throw new Error('Failed to fetch reviews.');
+            
             const reviews = await res.json();
             reviewsGrid.innerHTML = ''; 
             if (reviews.length === 0) {
@@ -117,7 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     createReviewBtn.addEventListener('click', async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/reviews`, { method: 'POST' });
+            // --- THE FIX: Add `credentials: 'include'` ---
+            const res = await fetch(`${API_BASE_URL}/api/reviews`, { method: 'POST', credentials: 'include' });
             if (!res.ok) throw new Error('Failed to create review.');
             const newReview = await res.json();
             window.location.href = `/review-editor.html?id=${newReview.id}`;
@@ -161,7 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteConfirmBtn.addEventListener('click', async () => {
         if (!reviewIdToDelete) return;
         try {
-            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewIdToDelete}`, { method: 'DELETE' });
+            // --- THE FIX: Add `credentials: 'include'` ---
+            const res = await fetch(`${API_BASE_URL}/api/reviews/${reviewIdToDelete}`, { method: 'DELETE', credentials: 'include' });
             if (!res.ok) throw new Error('Failed to delete the review.');
             
             document.querySelector(`[data-review*='"id":${reviewIdToDelete}']`).remove();

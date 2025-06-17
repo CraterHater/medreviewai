@@ -1,7 +1,5 @@
 // js/editor.js
 
-const API_BASE_URL = 'https://medreviewai.onrender.com';
-
 document.addEventListener('DOMContentLoaded', () => {
     // Form Elements
     const form = document.getElementById('review-form');

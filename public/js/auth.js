@@ -1,8 +1,5 @@
 // js/auth.js
 
-// --- THE FIX: Define the absolute base URL for your backend API ---
-const API_BASE_URL = 'https://medreviewai.onrender.com';
-
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.querySelector('#signup-form');
     const messageDiv = document.querySelector('#form-message');

@@ -1,7 +1,5 @@
 // js/ui.js
 
-const API_BASE_URL = 'https://medreviewai.onrender.com';
-
 document.addEventListener('DOMContentLoaded', () => {
     // --- Account Modal Elements & Logic ---
     const accountBtn = document.getElementById('account-btn');
@@ -31,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (accountMessageDiv) accountMessageDiv.className = 'form-message'; 
         
         try {
-            const res = await fetch(`${API_BASE_URL}/api/account`);
+            // --- THE FIX: Add `credentials: 'include'` ---
+            const res = await fetch(`${API_BASE_URL}/api/account`, { credentials: 'include' });
             if (!res.ok) throw new Error('Could not get account details.');
             const data = await res.json();
             if (data.openaiKey) {
@@ -100,10 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const openaiKey = apiKeyInput.value.trim();
 
             try {
+                // --- THE FIX: Add `credentials: 'include'` ---
                 const res = await fetch(`${API_BASE_URL}/api/account`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ openaiKey }),
+                    credentials: 'include'
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Failed to save key.');
@@ -127,10 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
             testKeyBtn.disabled = true;
 
             try {
+                 // --- THE FIX: Add `credentials: 'include'` ---
                 const res = await fetch(`${API_BASE_URL}/api/account/test-key`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ apiKey }),
+                    credentials: 'include'
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Test failed.');
